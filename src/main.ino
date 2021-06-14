@@ -21,7 +21,7 @@
 #include "CoinMarketCapApi.h"
 
 
-WiFiClientSecure client;
+WiFiClient client;
 
 
 // CoinMarketCap's limit is "no more than 10 per minute"
@@ -53,6 +53,7 @@ Preferences preferences;
 
 
 void setup() {
+  Serial.begin(115200);
   m5.begin();
   Wire.begin();
   M5.Lcd.setSwapBytes(true);
