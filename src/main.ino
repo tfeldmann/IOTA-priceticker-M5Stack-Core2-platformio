@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <M5Core2.h>
 #include <WiFi.h>
 #include <ESPmDNS.h>
@@ -61,14 +62,14 @@ void setup() {
     M5.Lcd.setSwapBytes(true);
     M5.Lcd.pushImage(40, 50, iotaWidth, iotaHeight, iota);
     delay(2000);
-    M5.Lcd.fillScreen(TFT_BLACK); 
+    M5.Lcd.fillScreen(TFT_BLACK);
 
    delay(10);
   if (restoreConfig()) {
     if (checkConnection()) {
       M5.Lcd.pushImage(280, 2, infoWidth, infoHeight, info);
       delay(2000);
-      M5.Lcd.fillScreen(TFT_BLACK); 
+      M5.Lcd.fillScreen(TFT_BLACK);
       settingMode = false;
       startWebServer();
       return;
@@ -86,7 +87,7 @@ void loop() {
   if (settingMode) {
   }
   webServer.handleClient();
-  
+
 
 
   if(M5.BtnA.isPressed())  M5.Axp.SetLcdVoltage(2600);
@@ -96,12 +97,12 @@ void loop() {
   if (count2 >=2600) {
     printTickerDataIOTA("MIOTA");
   }
-  
+
   Serial.print("Counter: ");
   Serial.println(count2);
 
   count2++;
-  
+
   delay(150);
 
 }
@@ -126,7 +127,7 @@ boolean restoreConfig() {
   M5.Lcd.drawString(cmc_api_key, 100, 40, 2);
 
   delay(2000);
-  
+
   WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
 
   if(wifi_ssid.length() > 0) {
@@ -148,7 +149,7 @@ boolean checkConnection() {
   M5.Lcd.println();
 
 
-  
+
   while ( count < 30 ) {
     if (WiFi.status() == WL_CONNECTED) {
       Serial.println();
@@ -244,13 +245,13 @@ void startWebServer() {
     Serial.print("Starting Web Server at ");
     //M5.Lcd.print("Starting Web Server at ");
     //M5.Lcd.drawString("Loading Ticker data...", 0, 0, 2);
-   
+
     Serial.println(WiFi.localIP());
     //M5.Lcd.println(WiFi.localIP());
     //M5.Lcd.drawString(WiFi.localIP(), 100, 0, 2);
 
 
-        
+
     webServer.on("/", []() {
       String s = "<h1>STA mode</h1><p><a href=\"/reset\">Reset Wi-Fi Settings</a></p>";
       webServer.send(200, "text/html", makePage("STA mode", s));
@@ -265,8 +266,8 @@ void startWebServer() {
       delay(3000);
       ESP.restart();
     });
-    
-// Header 
+
+// Header
     M5.Lcd.fillRect(0, 0, 320, 27, TFT_COLOR1);
     printTickerDataIOTA("MIOTA");
   }
@@ -354,7 +355,7 @@ String urlDecode(String input) {
 void printTickerDataIOTA(String ticker)
 {
 
-        
+
     Serial.println("---------------------------------");
     Serial.println("Getting ticker data for " + ticker);
     M5.Lcd.setTextColor(WHITE);
@@ -363,7 +364,7 @@ void printTickerDataIOTA(String ticker)
     //Bitcoin, you can view the letter after Circulating Supply at https://coinmarketcap.com/, it is BTC
     CoinMarketCapApi api(client, cmc_api_key);
     CMCTickerResponse response = api.GetTickerInfo(ticker, "USD");
-    
+
     if (response.error == "") {
         Serial.print("ID: ");
         Serial.println(response.id);
@@ -431,7 +432,7 @@ void printTickerDataIOTA(String ticker)
         for (int b = 0; b <= bars; b++) {
             M5.Lcd.fillRect(281 + (b * 6), 23 - (b * 4), 5, b * 4, GRAY);
         }
-        
+
         M5.Lcd.pushImage(10, 30, iota2Width, iota2Height, iota2);
 
 
@@ -449,32 +450,32 @@ void printTickerDataIOTA(String ticker)
         M5.Lcd.drawString("MIOTA USD Price", 60, 4, 4);
 
         M5.Lcd.setTextColor(WHITE);
-        
+
         if (response.percent_change_1h < 0) {
-            M5.Lcd.setTextColor(RED);          
+            M5.Lcd.setTextColor(RED);
         }
-        
+
         if (response.percent_change_1h > 0) {
-            M5.Lcd.setTextColor(GREEN);              
+            M5.Lcd.setTextColor(GREEN);
         }
-        
+
 // Price
-        M5.Lcd.fillRect(115, 38, 205, 50, BLACK); 
+        M5.Lcd.fillRect(115, 38, 205, 50, BLACK);
         M5.Lcd.drawString(String(response.price).c_str(), 115, 50, 6);
         M5.Lcd.setTextColor(CYAN);
 
         if (response.price > 2) {
-           M5.Lcd.pushImage(265, 38, rocketWidth, rocketHeight, rocket);              
+           M5.Lcd.pushImage(265, 38, rocketWidth, rocketHeight, rocket);
         }
 
         if (response.price > 5) {
-          M5.Lcd.pushImage(265, 38, moonWidth, moonHeight, moon);              
+          M5.Lcd.pushImage(265, 38, moonWidth, moonHeight, moon);
         }
 
 
 // Rank
         M5.Lcd.drawString("Rank:", 115, 100, 4);
-        M5.Lcd.fillRect(185, 100, 120, 20, BLACK); 
+        M5.Lcd.fillRect(185, 100, 120, 20, BLACK);
         M5.Lcd.drawString(String(response.cmc_rank).c_str(), 190, 100, 4);
 
 
@@ -482,7 +483,7 @@ void printTickerDataIOTA(String ticker)
 
 // hours change
         M5.Lcd.fillRect(240, 140, 80, 90, BLACK);
-        
+
         M5.Lcd.setTextColor(YELLOW);
 
         if (response.percent_change_1h < 0) {
@@ -521,9 +522,9 @@ void printTickerDataIOTA(String ticker)
         }
         M5.Lcd.drawString("% Price change 7d:", 11, 205, 4);
         M5.Lcd.drawString(String(response.percent_change_7d).c_str(), 245, 205, 4);
-      
+
         count2 = 2;
-       
+
 
     }
 
@@ -535,6 +536,6 @@ void printTickerDataIOTA(String ticker)
         delay(1000);
     }
 
-    
+
     Serial.println("---------------------------------");
 }
